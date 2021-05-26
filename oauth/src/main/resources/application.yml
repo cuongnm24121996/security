@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+uaa:
+  security:
+    jwt:
+      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+      base64-secret: MWViNmY0NTQ3YTA1OTY4ZWIwYjJlMDdkZDZjYjdkNDgxOWZhMzU0NWYyODZiNTZjYjFkNTM1YjI5NTkzOWQ2MGM3ZDhmNTAzMzdlZTg3N2QyMGNiMThiZTdhYTZjYjRhNjMzNzY3MmI1MmMwMDdmZTI1M2E1MTNhNjRjZDU2NjU=
+      # Token is valid 24 hours
+      token-validity-in-seconds: 86400
+      token-validity-in-seconds-for-remember-me: 2592000
