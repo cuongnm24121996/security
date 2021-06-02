@@ -1,5 +1,6 @@
 package com.cuongnm.oauth2.config;
 
+import com.cuongnm.oauth2.security.AuthoritiesConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -10,57 +11,65 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-@Order(1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public WebSecurityConfig() {
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/login", "/authorizer").permitAll()
-                .antMatchers("/**").hasAnyRole("ADMIN", "USER")
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/home")
-                .failureUrl("/login?error=true")
-                .permitAll()
-                .and()
+        http
+            .authorizeRequests()
+                .antMatchers("/login", "/authorizer, /authenticate").permitAll()
+                .antMatchers("/logout").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/activate").permitAll()
+                .antMatchers("/account/reset-password/init").permitAll()
+                .antMatchers("/account/reset-password/finish").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/management/health").permitAll()
+                .antMatchers("/management/info").permitAll()
+                .antMatchers("/management/prometheus").permitAll()
+                .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            .and()
+                .formLogin().loginPage("/login")
+                .defaultSuccessUrl("/login")
+                .failureUrl("/login?error=true").permitAll()
+            .and()
                 .logout()
                 .logoutSuccessUrl("/login?logout=true")
                 .invalidateHttpSession(true)
                 .permitAll()
-                .and()
+            .and()
                 .csrf()
-                .disable();
+                .disable()
+            .anonymous().disable()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            .and()
+                .httpBasic();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
-                .ignoring()
+            .ignoring()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
-                .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/vendor/**", "/fonts/**")
+                .antMatchers("/oauth/login, /oauth/authorizer, oauth/logout")
+                .antMatchers("/resources/**")
+                .antMatchers("/static/**")
                 .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/i18n/**")
                 .antMatchers("/content/**")
                 .antMatchers("/h2-console/**")
                 .antMatchers("/swagger-ui/index.html")
                 .antMatchers("/test/**");
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("cuongnm").password(passwordEncoder().encode("123456")).roles("USER");
     }
 
     @Bean
