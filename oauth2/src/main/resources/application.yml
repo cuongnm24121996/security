@@ -1,11 +1,16 @@
 server:
   port: 9000
   servlet:
-    context-path: /auth
+    context-path: /oauth
 
 spring:
   mvc:
     static-path-pattern: /static/**
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/uaa
+    username: root
+    password: root
 
 logging:
   level:
