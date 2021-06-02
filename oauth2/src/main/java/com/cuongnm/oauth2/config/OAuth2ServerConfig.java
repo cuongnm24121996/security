@@ -1,5 +1,6 @@
 package com.cuongnm.oauth2.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 @EnableAuthorizationServer
+@EnableConfigurationProperties(SecurityProperties.class)
 public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     private final TokenStore tokenStore;
     private final UserDetailsService userDetailsService;
