@@ -65,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
             .ignoring()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
-                .antMatchers("/oauth/login, /oauth/authorizer, /oauth/logout")
+                .antMatchers("/oauth/login, /oauth/authorizer, oauth/logout")
                 .antMatchers("/resources/**")
                 .antMatchers("/static/**")
                 .antMatchers("/app/**/*.{js,html}")
