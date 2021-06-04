@@ -17,8 +17,21 @@ spring:
         show_sql: true
         format_sql: true
 
+security:
+  jwt:
+    key-store: classpath:keystore.jks
+    key-store-password: letmein
+    key-pair-alias: mytestkey
+    key-pair-password: changeme
+    base64-secret: NjU0ZDBkNzMzZjVkNzVlNzkwMDg0YTRlODFjMzQ0M2QzY2EyMzRmZWQ1NDhhMjA4OTlkNzg0OGYxOTU1YWI0ZjY4MjE4NDViYWJmYTIyNjg2N2Q4NDhmYjcwNjRjMzY2NTkxMzEzOTExZjVmMzA4Y2JmYTMwMDUzZGJhYTBiMjA=
+    token-validity-in-seconds: 86400
+    token-validity-in-seconds-for-remember-me: 2592000
+
+
 logging:
   level:
     org:
       hibernate:
         type: trace
+
+debug: true
