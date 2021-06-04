@@ -33,8 +33,8 @@ public class JDBCTokenStoreConfig {
         return dataSource;
     }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new JdbcTokenStore(dataSource());
-    }
+//    @Bean
+//    public TokenStore tokenStore() {
+//        return new JdbcTokenStore(dataSource());
+//    }
 }
