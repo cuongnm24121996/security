@@ -1,4 +1,4 @@
-package com.cuongnm.authorization.server.config;
+package com.cuongnm.authorization.server.constant;
 
 public class Constants {
     public static String TENANT_FORMAT = "X-Tenant_ID";

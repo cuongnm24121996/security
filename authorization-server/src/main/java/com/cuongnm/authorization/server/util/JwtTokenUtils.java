@@ -1,9 +1,6 @@
 package com.cuongnm.authorization.server.util;
 
-import antlr.StringUtils;
-import com.cuongnm.authorization.server.config.Constants;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
+import com.cuongnm.authorization.server.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;

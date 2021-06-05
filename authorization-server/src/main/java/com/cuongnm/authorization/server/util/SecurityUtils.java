@@ -1,6 +1,6 @@
 package com.cuongnm.authorization.server.util;
 
-import com.cuongnm.authorization.server.config.Constants;
+import com.cuongnm.authorization.server.constant.Constants;
 import com.cuongnm.authorization.server.security.AccessTokenContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

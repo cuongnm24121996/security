@@ -1,6 +1,6 @@
 package com.cuongnm.authorization.server.filter;
 
-import com.cuongnm.authorization.server.config.Constants;
+import com.cuongnm.authorization.server.constant.Constants;
 import com.cuongnm.authorization.server.tenant.TenantContextHolder;
 import com.cuongnm.authorization.server.util.JwtTokenUtils;
 import org.slf4j.Logger;
