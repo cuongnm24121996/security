@@ -29,7 +29,9 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
 
     private JwtAccessTokenConverter jwtAccessTokenConverter;
 
-    public AuthorizationConfig(PasswordEncoder passwordEncoder, DataSource dataSource, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, SecurityProperties securityProperties) {
+    public AuthorizationConfig(PasswordEncoder passwordEncoder, DataSource dataSource,
+                               AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
+                               SecurityProperties securityProperties) {
         this.passwordEncoder = passwordEncoder;
         this.dataSource = dataSource;
         this.authenticationManager = authenticationManager;
