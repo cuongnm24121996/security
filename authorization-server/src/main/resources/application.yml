@@ -34,4 +34,4 @@ logging:
       hibernate:
         type: trace
 
-debug: true
+debug: false
