@@ -17,10 +17,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.security.oauth2.provider.token.store.*;
 
 import javax.sql.DataSource;
 import java.security.KeyPair;
@@ -78,10 +75,10 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         log.info("Config jwt access converter");
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         JwtProperties jwtProperties = securityProperties.getJwt();
 //        KeyPair keyPair = keyPair(jwtProperties, keyStoreKeyFactory(jwtProperties));
-        jwtAccessTokenConverter.setJwtClaimsSetVerifier(customClaimVerifier());
+        jwtAccessTokenConverter.setJwtClaimsSetVerifier(jwtClaimsSetVerifier());
 //        jwtAccessTokenConverter.setKeyPair(keyPair);
         jwtAccessTokenConverter.setSigningKey(jwtProperties.getBase64Secret());
         log.info("Load key store successful");
@@ -102,7 +99,12 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     }
 
     @Bean
-    JwtClaimsSetVerifier customClaimVerifier() {
+    JwtClaimsSetVerifier customJwtClaimVerifier() {
         return new CustomClaimVerifier();
+    }
+
+    @Bean
+    public JwtClaimsSetVerifier jwtClaimsSetVerifier() {
+        return new DelegatingJwtClaimsSetVerifier(Arrays.asList(customJwtClaimVerifier()));
     }
 }

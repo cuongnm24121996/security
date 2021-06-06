@@ -6,6 +6,7 @@ import com.cuongnm.authorization.server.tenant.TenantContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier;
 
+
 import java.util.Map;
 
 public class CustomClaimVerifier implements JwtClaimsSetVerifier {
