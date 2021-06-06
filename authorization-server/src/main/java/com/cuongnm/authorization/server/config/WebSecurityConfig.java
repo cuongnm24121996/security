@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -35,7 +36,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            .and().httpBasic();
+            .and()
+                .authorizeRequests()
+                .antMatchers("/login", "/authorizer, /authenticate").permitAll()
+            .and()
+                .formLogin()
+                .loginPage("/login").permitAll()
+            .and()
+                .logout().invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutSuccessUrl("/login?logout")
+                .deleteCookies("JSESSIONID").permitAll()
+            .and()
+                .httpBasic();
     }
 
     @Override

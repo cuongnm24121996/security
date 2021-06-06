@@ -20,6 +20,8 @@ public class TenantAwareJwtAccessTokenConverter implements TokenEnhancer {
         User user = (User) oAuth2Authentication.getPrincipal();
         additionalInfo.put(Constants.TENANT_FORMAT, user.getTenantId());
         additionalInfo.put(Constants.EMAIL, user.getEmail());
+        additionalInfo.put(Constants.POSTAL_COED, user.getPostalCode());
+        additionalInfo.put(Constants.FULL_NAME, user.getFullName());
         additionalInfo.put(Constants.PHONE, user.getPhone());
         ((DefaultOAuth2AccessToken) oAuth2AccessToken).setAdditionalInformation(additionalInfo);
         return oAuth2AccessToken;

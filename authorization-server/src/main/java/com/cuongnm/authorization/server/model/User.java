@@ -20,6 +20,8 @@ public class User implements Serializable {
         this.email = user.getEmail();
         this.tenantId = user.getTenantId();
         this.phone = user.getPhone();
+        this.fullName = user.getFullName();
+        this.postalCode = user.getPostalCode();
         this.enabled = user.isEnabled();
         this.accountNonExpired = user.isAccountNonExpired();
         this.credentialsNonExpired = user.isCredentialsNonExpired();
@@ -48,6 +50,12 @@ public class User implements Serializable {
 
     @Column(name = "enabled")
     private boolean enabled;
+
+    @Column(name = "fullName")
+    private String fullName;
+
+    @Column(name = "postalCode")
+    private String postalCode;
 
     @Column(name = "accountNonExpired")
     private boolean accountNonExpired;
