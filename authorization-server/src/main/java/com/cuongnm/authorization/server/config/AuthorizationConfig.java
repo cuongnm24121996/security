@@ -1,6 +1,7 @@
 package com.cuongnm.authorization.server.config;
 
 import com.cuongnm.authorization.server.model.JwtProperties;
+import com.cuongnm.authorization.server.security.CustomClaimVerifier;
 import com.cuongnm.authorization.server.security.TenantAwareJwtAccessTokenConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.sql.DataSource;
@@ -33,8 +35,6 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final SecurityProperties securityProperties;
-
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
 
     public AuthorizationConfig(PasswordEncoder passwordEncoder, DataSource dataSource,
                                AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
@@ -78,15 +78,12 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         log.info("Config jwt access converter");
-        if (jwtAccessTokenConverter != null) {
-            return jwtAccessTokenConverter;
-        }
-
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         JwtProperties jwtProperties = securityProperties.getJwt();
-        KeyPair keyPair = keyPair(jwtProperties, keyStoreKeyFactory(jwtProperties));
-        log.info("Load key store successful");
-        jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setKeyPair(keyPair);
+//        KeyPair keyPair = keyPair(jwtProperties, keyStoreKeyFactory(jwtProperties));
+        jwtAccessTokenConverter.setJwtClaimsSetVerifier(customClaimVerifier());
+//        jwtAccessTokenConverter.setKeyPair(keyPair);
+        jwtAccessTokenConverter.setSigningKey(jwtProperties.getBase64Secret());
         log.info("Load key store successful");
         return jwtAccessTokenConverter;
     }
@@ -102,5 +99,10 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     @Bean
     public TokenEnhancer tokenEnhancer() {
         return new TenantAwareJwtAccessTokenConverter();
+    }
+
+    @Bean
+    JwtClaimsSetVerifier customClaimVerifier() {
+        return new CustomClaimVerifier();
     }
 }

@@ -13,8 +13,12 @@ public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     @Column(name = "name")
     private String name;
+
+    @Column(name = "tenantId")
+    private String tenantId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "permission_role", joinColumns = {
