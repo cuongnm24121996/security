@@ -5,9 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,17 +33,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
-            .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .and()
-                .sessionManagement()
+//            .exceptionHandling()
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             .and()
-                .authorizeRequests()
-                .antMatchers("/login", "/authorizer, /authenticate").permitAll()
+                .requestMatchers()
+                .antMatchers("/login", "/oauth/authorize", "/authenticate")
             .and()
-                .formLogin()
-                .loginPage("/login").permitAll()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+            .and()
+                .formLogin().loginPage("/login").permitAll()
             .and()
                 .logout().invalidateHttpSession(true)
                 .clearAuthentication(true)
@@ -49,6 +52,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID").permitAll()
             .and()
                 .httpBasic();
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers(HttpMethod.OPTIONS, "/**")
+                .antMatchers("/app/**/*.{js,html,ico}")
+                .antMatchers("/i18n/**")
+                .antMatchers("/content/**")
+                .antMatchers("/h2-console/**")
+                .antMatchers("/swagger-ui/index.html")
+                .antMatchers("/test/**");
     }
 
     @Override

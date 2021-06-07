@@ -32,18 +32,19 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String tenantId = httpServletRequest.getHeader(Constants.TENANT_FORMAT);
-        if (StringUtils.isBlank(tenantId)) {
-            throw new AccessDeniedException("Tenant invalid");
-        }
+//        String tenantId = httpServletRequest.getHeader(Constants.TENANT_FORMAT);
+//        if (StringUtils.isBlank(tenantId) && !Constants.REQUEST_URI_IGNORE.contains(httpServletRequest.getRequestURI())) {
+//            throw new AccessDeniedException("Tenant invalid");
+//        }
 
-        String token = SecurityUtils.getTokenValue().orElse(null);
-        if (StringUtils.isNotBlank(token)) {
-            String tenantIdFromToken = jwtTokenUtil.getTenantIdFromToken();
-            if (!tenantId.equals(tenantIdFromToken)) {
-                throw new AccessDeniedException("Tenant invalid");
-            }
-        }
+//        String token = SecurityUtils.getTokenValue().orElse(null);
+//        if (StringUtils.isNotBlank(token)) {
+//            String tenantIdFromToken = jwtTokenUtil.getTenantIdFromToken();
+//            if (!tenantId.equals(tenantIdFromToken)) {
+//                throw new AccessDeniedException("Tenant invalid");
+//            }
+//        }
+        String tenantId = "cuongnm";
         TenantContextHolder.setTenantId(tenantId);
         log.info("Request has tenant_id: " + tenantId);
         filterChain.doFilter(servletRequest, servletResponse);
