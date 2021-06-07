@@ -1,6 +1,5 @@
 package com.cuongnm.authorization.server.service;
 
-import antlr.StringUtils;
 import com.cuongnm.authorization.server.model.AuthUserDetail;
 import com.cuongnm.authorization.server.model.User;
 import com.cuongnm.authorization.server.repository.UserDetailRepository;
