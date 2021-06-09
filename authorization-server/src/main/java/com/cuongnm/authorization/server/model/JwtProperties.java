@@ -1,20 +1,18 @@
 package com.cuongnm.authorization.server.model;
 
-import org.springframework.core.io.Resource;
-
 public class JwtProperties {
-    private Resource keyStore;
+    private String pathLocation;
     private String keyStorePassword;
     private String keyPairAlias;
     private String keyPairPassword;
     private String base64Secret;
 
-    public Resource getKeyStore() {
-        return keyStore;
+    public String getPathLocation() {
+        return pathLocation;
     }
 
-    public void setKeyStore(Resource keyStore) {
-        this.keyStore = keyStore;
+    public void setPathLocation(String pathLocation) {
+        this.pathLocation = pathLocation;
     }
 
     public String getKeyStorePassword() {

@@ -23,10 +23,10 @@ spring:
 
 security:
   jwt:
-    key-store: classpath:keystore.jks
-    key-store-password: letmein
-    key-pair-alias: mytestkey
-    key-pair-password: changeme
+    path-location: src/main/resources/keystore/keystore.jks
+    key-store-password: Cthau19961772
+    key-pair-alias: secret
+    key-pair-password: Cthau19961772
     base64-secret: NjU0ZDBkNzMzZjVkNzVlNzkwMDg0YTRlODFjMzQ0M2QzY2EyMzRmZWQ1NDhhMjA4OTlkNzg0OGYxOTU1YWI0ZjY4MjE4NDViYWJmYTIyNjg2N2Q4NDhmYjcwNjRjMzY2NTkxMzEzOTExZjVmMzA4Y2JmYTMwMDUzZGJhYTBiMjA=
     token-validity-in-seconds: 86400
     token-validity-in-seconds-for-remember-me: 2592000

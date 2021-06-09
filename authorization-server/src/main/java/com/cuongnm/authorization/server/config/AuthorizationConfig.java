@@ -17,10 +17,18 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.*;
+import org.springframework.security.oauth2.provider.token.store.DelegatingJwtClaimsSetVerifier;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.security.KeyPair;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 
 @Configuration
@@ -32,6 +40,7 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final SecurityProperties securityProperties;
+    private KeyPair keyPair;
 
     public AuthorizationConfig(PasswordEncoder passwordEncoder, DataSource dataSource,
                                AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
@@ -41,6 +50,20 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.securityProperties = securityProperties;
+    }
+
+    @PostConstruct
+    public void init() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        JwtProperties jwtProperties = securityProperties.getJwt();
+        FileInputStream is = new FileInputStream(jwtProperties.getPathLocation());
+        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keystore.load(is, jwtProperties.getKeyStorePassword().toCharArray());
+        Key key = keystore.getKey(jwtProperties.getKeyPairAlias(), jwtProperties.getKeyPairPassword().toCharArray());
+        if (key instanceof PrivateKey) {
+            Certificate cert = keystore.getCertificate(jwtProperties.getKeyPairAlias());
+            PublicKey publicKey = cert.getPublicKey();
+            keyPair = new KeyPair(publicKey, (PrivateKey) key);
+        }
     }
 
     @Override
@@ -73,25 +96,27 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     }
 
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+    public JwtAccessTokenConverter jwtAccessTokenConverter() throws UnrecoverableKeyException, CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException {
         log.info("Config jwt access converter");
         final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         JwtProperties jwtProperties = securityProperties.getJwt();
-//        KeyPair keyPair = keyPair(jwtProperties, keyStoreKeyFactory(jwtProperties));
+//        KeyPair keyPair = loadKeyPair();
         jwtAccessTokenConverter.setJwtClaimsSetVerifier(jwtClaimsSetVerifier());
-//        jwtAccessTokenConverter.setKeyPair(keyPair);
+        jwtAccessTokenConverter.setKeyPair(keyPair);
         jwtAccessTokenConverter.setSigningKey(jwtProperties.getBase64Secret());
         log.info("Load key store successful");
         return jwtAccessTokenConverter;
     }
 
-    private KeyPair keyPair(JwtProperties jwtProperties, KeyStoreKeyFactory keyStoreKeyFactory) {
-        return keyStoreKeyFactory.getKeyPair(jwtProperties.getKeyPairAlias(), jwtProperties.getKeyPairPassword().toCharArray());
-    }
-
-    private KeyStoreKeyFactory keyStoreKeyFactory(JwtProperties jwtProperties) {
-        return new KeyStoreKeyFactory(jwtProperties.getKeyStore(), jwtProperties.getKeyStorePassword().toCharArray());
-    }
+//    private KeyPair keyPair(JwtProperties jwtProperties, KeyStoreKeyFactory keyStoreKeyFactory) {
+//        return keyStoreKeyFactory.getKeyPair(jwtProperties.getKeyPairjwtProperties.getKeyPairAlias()(), jwtProperties
+//        .getKeyPairPassword()
+//        .toCharArray());
+//    }
+//
+//    private KeyStoreKeyFactory keyStoreKeyFactory(JwtProperties jwtProperties) {
+//        return new KeyStoreKeyFactory(jwtProperties.getKeyStore(), jwtProperties.getKeyStorePassword().toCharArray());
+//    }
 
     @Bean
     public TokenEnhancer tokenEnhancer() {
@@ -107,4 +132,19 @@ public class AuthorizationConfig implements AuthorizationServerConfigurer {
     public JwtClaimsSetVerifier jwtClaimsSetVerifier() {
         return new DelegatingJwtClaimsSetVerifier(Arrays.asList(customJwtClaimVerifier()));
     }
+
+//    KeyPair loadKeyPair() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException,
+//            UnrecoverableKeyException {
+//        JwtProperties jwtProperties = securityProperties.getJwt();
+//        FileInputStream is = new FileInputStream(jwtProperties.getPathLocation());
+//        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+//        keystore.load(is, jwtProperties.getKeyStorePassword().toCharArray());
+//        Key key = keystore.getKey(jwtProperties.getKeyPairAlias(), jwtProperties.getKeyPairPassword().toCharArray());
+//        if (key instanceof PrivateKey) {
+//            Certificate cert = keystore.getCertificate(jwtProperties.getKeyPairAlias());
+//            PublicKey publicKey = cert.getPublicKey();
+//            return new KeyPair(publicKey, (PrivateKey) key);
+//        }
+//        return null;
+//    }
 }
