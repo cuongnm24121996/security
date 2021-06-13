@@ -21,6 +21,11 @@ services:
       # Where our data will be persisted
     volumes:
       - ./sql-scripts/uaa.sql:/docker-entrypoint-initdb.d/uaa.sql
+      - /home/sites/:/var/lib/mysql
+
 # Names our volume
-volumes:
-  my-db:
+#volumes:
+#  my-db:
+#    driver_opts:
+#      device: /home/sites/
+#      o: bind
