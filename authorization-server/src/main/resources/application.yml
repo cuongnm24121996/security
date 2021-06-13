@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.10.105:3306/uaa_server
+    url: jdbc:mysql://localhost:3307/uaa
     username: cuongnm
-    password: Cthau1996!
+    password: cuongnm
   jpa:
     hibernate:
       naming:
